@@ -9,19 +9,19 @@ export enum Bump {
 }
 
 export interface Options {
-  verbose?: boolean;
-  dryRun?: boolean;
-  packageManager?: string;
-  preScripts?: string;
-  commitMessage?: string;
-  commitAuthor?: string;
-  commitEmail?: string;
-  branch?: string;
+  verbose: boolean;
+  dryRun: boolean;
+  packageManager: string;
+  preScripts: string;
+  commitMessage: string;
+  commitAuthor: string;
+  commitEmail: string;
+  branch: string;
   releaseNotesSource?: string;
   releaseNotesTemplate?: string;
-  skipInstall?: boolean;
-  skipGithubRelease?: boolean;
-  skipPublish?: boolean;
-  skipBump?: boolean;
+  skipInstall: boolean;
+  skipGithubRelease: boolean;
+  skipPublish: boolean;
+  skipBump: boolean;
   githubToken?: string;
 }

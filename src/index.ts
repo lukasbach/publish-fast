@@ -4,9 +4,12 @@ import { Argument, program } from "commander";
 import * as fs from "fs";
 import * as path from "path";
 import { inc } from "semver";
+import simpleGit from "simple-git";
 import { Bump, Options } from "./types";
 import {
   bumpVersion,
+  commitChanges,
+  getGithubRepoAndUser,
   getGithubToken,
   getPackageManager,
   installDeps,
@@ -14,6 +17,8 @@ import {
   loadReleaseNotes,
   log,
   preScripts,
+  verifyBranch,
+  verifyNoUncommittedChanges,
 } from "./utils";
 
 program
@@ -52,25 +57,26 @@ program
 program.parse(process.argv);
 export const bump = program.processedArgs[0] as Bump;
 export const options = program.opts() as Options;
+export const git = simpleGit(process.cwd());
 
 (async () => {
   const packageManager = getPackageManager();
+  const packageJson = await loadPackageJson();
+  const { repoUser, repoName } = await getGithubRepoAndUser(packageJson);
 
-  const currentVersion = JSON.parse(
-    fs.readFileSync(path.join(process.cwd(), "package.json"), { encoding: "utf-8" })
-  ).version;
-
+  const currentVersion = packageJson.version;
   const newVersion = inc(currentVersion, bump);
 
-  const packageJson = await loadPackageJson();
-
-  log(`__Using ${packageManager}__`);
+  log(`__github.com/${repoUser}/${repoName}, using ${packageManager}__`);
   log(`Bumping **${packageJson.name}** from **${currentVersion}** to **${newVersion}**`);
 
   const ghToken = await getGithubToken();
+  await verifyBranch();
+  // await verifyNoUncommittedChanges();
   await installDeps(packageManager);
   await preScripts(packageManager);
   const releaseNotes = await loadReleaseNotes();
   await bumpVersion();
+  await commitChanges(newVersion);
   console.log(ghToken);
 })();

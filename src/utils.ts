@@ -3,7 +3,7 @@ import * as path from "path";
 import { cyan, gray, green } from "colors";
 import execa from "execa";
 import prompts from "prompts";
-import { bump, options } from "./index";
+import { bump, git, options } from "./index";
 
 export const log = (message: string) => {
   console.log(
@@ -154,3 +154,57 @@ export const getGithubToken = async () => {
 };
 
 export const loadPackageJson = async () => fs.readJSON(path.join(process.cwd(), "package.json"));
+
+export const getRepoUrl = async (packageJson: any) => {
+  if (packageJson.repository && typeof packageJson.repository === "string") {
+    return packageJson.repository;
+  }
+  const origin = (await git.getConfig("remote.origin.url")).value;
+  if (!origin) {
+    log(`No repository url found in package.json or as git origin.`);
+    process.exit(1);
+  }
+
+  return origin;
+};
+
+export const getGithubRepoAndUser = async (packageJson: any) => {
+  const repoUrl = await getRepoUrl(packageJson);
+  const result = /github\.com\/(.*?)\/(.*?)(?:\.git)?$/i.exec(repoUrl);
+  if (!result) {
+    log(`Could not parse repository url: ${repoUrl}`);
+    process.exit(1);
+  }
+  return {
+    repoUser: result[1],
+    repoName: result[2],
+  };
+};
+
+export const verifyNoUncommittedChanges = async () => {
+  const { isClean } = await git.status();
+  if (!isClean()) {
+    log(`There are uncommitted changes. Please commit or stash them before running this command.`);
+    process.exit(1);
+  }
+  log(`__No uncommitted changes__`);
+};
+
+export const verifyBranch = async () => {
+  if (!options.branch) {
+    return;
+  }
+  const { current } = await git.branch();
+  if (current !== options.branch) {
+    log(`You are not on the ${options.branch} branch. Please switch to the main branch before running this command.`);
+    process.exit(1);
+  }
+  log(`__Releasing from branch__ ${current}`);
+};
+
+export const commitChanges = async version => {
+  log(`> ~~Committing changes~~`);
+  const msg = (options.commitMessage ?? "").replace("{version}", version);
+  await git.add("./*");
+  await git.addConfig("user.name", options.commitAuthor).addConfig("user.email", options.commitEmail).commit(msg);
+};
