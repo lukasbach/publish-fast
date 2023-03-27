@@ -3,6 +3,7 @@ import * as path from "path";
 import { cyan, gray, green } from "colors";
 import execa from "execa";
 import prompts from "prompts";
+import { Octokit } from "@octokit/rest";
 import { bump, git, options } from "./index";
 
 export const log = (message: string) => {
@@ -196,6 +197,7 @@ export const verifyBranch = async () => {
   if (!options.branch) {
     return;
   }
+
   const { current } = await git.branch();
   if (current !== options.branch) {
     log(`You are not on the ${options.branch} branch. Please switch to the main branch before running this command.`);
@@ -205,7 +207,12 @@ export const verifyBranch = async () => {
 };
 
 export const commitChanges = async version => {
+  if (options.skipCommit) {
+    return;
+  }
+
   log(`> ~~Committing changes~~`);
+
   const msg = (options.commitMessage ?? "").replace("{version}", version);
 
   if (options.dryRun) {
@@ -218,6 +225,10 @@ export const commitChanges = async version => {
 };
 
 export const createTag = async version => {
+  if (options.skipCommit) {
+    return;
+  }
+
   log(`> ~~Creating tag~~`);
 
   if (options.dryRun) {
@@ -229,6 +240,10 @@ export const createTag = async version => {
 };
 
 export const pushChanges = async () => {
+  if (options.skipPush) {
+    return;
+  }
+
   log(`> ~~Pushing changes~~`);
 
   if (options.dryRun) {
@@ -239,4 +254,38 @@ export const pushChanges = async () => {
   const { current } = await git.branch();
   await git.push("origin", current);
   await git.pushTags("origin");
+};
+
+export const createGithubRelease = async (opts: {
+  token: string;
+  version: string;
+  releaseNotes: string;
+  owner: string;
+  repo: string;
+}) => {
+  if (options.skipGithubRelease) {
+    return;
+  }
+
+  log(`> ~~Creating Github Release~~`);
+
+  if (options.dryRun) {
+    log(`**Skipping creating github release**`);
+    return;
+  }
+
+  const { current } = await git.branch();
+  const kit = new Octokit({
+    token: opts.token,
+  });
+  await kit.repos.createRelease({
+    owner: opts.owner,
+    repo: opts.repo,
+    tag_name: `v${opts.version}`,
+    name: `v${opts.version}`,
+    target_commitish: current,
+    body: opts.releaseNotes,
+    draft: options.draftRelease,
+    make_latest: "true",
+  });
 };

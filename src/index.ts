@@ -45,10 +45,13 @@ program
     "--github-token <github-token>",
     "github token for creating github release. If not provided, CLI will attempt to load through gh CLI, or alternatively interactively ask."
   )
+  .option("--draft-release", "create github release as draft", false)
   .option("--skip-install", "skip installing dependencies", false)
   .option("--skip-github-release", "skip creating github release", false)
   .option("--skip-publish", "skip publishing to npm", false)
   .option("--skip-bump", "skip bumping version", false)
+  .option("--skip-push", "skip pushing changes", false)
+  .option("--skip-commit", "skip committing changes", false)
   .addArgument(
     new Argument("bump")
       .argParser(bump => bump as Bump)

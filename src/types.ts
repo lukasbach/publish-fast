@@ -23,5 +23,8 @@ export interface Options {
   skipGithubRelease: boolean;
   skipPublish: boolean;
   skipBump: boolean;
+  skipPush: boolean;
+  skipCommit: boolean;
   githubToken?: string;
+  draftRelease?: boolean;
 }
