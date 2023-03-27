@@ -30,6 +30,9 @@ module.exports = {
     "no-console": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/no-explicit-any": "off",
+    "import/no-cycle": "off",
+    "no-restricted-syntax": "off",
+    "no-await-in-loop": "off",
   },
   ignorePatterns: ["lib", "*.js"],
 };
