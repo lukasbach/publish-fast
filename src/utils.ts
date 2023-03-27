@@ -207,6 +207,36 @@ export const verifyBranch = async () => {
 export const commitChanges = async version => {
   log(`> ~~Committing changes~~`);
   const msg = (options.commitMessage ?? "").replace("{version}", version);
+
+  if (options.dryRun) {
+    log(`**Skipping git commit with message** __${msg}__ from __${options.commitAuthor} <${options.commitEmail}>__`);
+    return;
+  }
+
   await git.add("./*");
   await git.addConfig("user.name", options.commitAuthor).addConfig("user.email", options.commitEmail).commit(msg);
+};
+
+export const createTag = async version => {
+  log(`> ~~Creating tag~~`);
+
+  if (options.dryRun) {
+    log(`**Skipping creating a tag** __v${version}__`);
+    return;
+  }
+
+  await git.addTag(`v${version}`);
+};
+
+export const pushChanges = async () => {
+  log(`> ~~Pushing changes~~`);
+
+  if (options.dryRun) {
+    log(`**Skipping pushing changes and tags**`);
+    return;
+  }
+
+  const { current } = await git.branch();
+  await git.push("origin", current);
+  await git.pushTags("origin");
 };

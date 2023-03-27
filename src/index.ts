@@ -9,6 +9,7 @@ import { Bump, Options } from "./types";
 import {
   bumpVersion,
   commitChanges,
+  createTag,
   getGithubRepoAndUser,
   getGithubToken,
   getPackageManager,
@@ -17,6 +18,7 @@ import {
   loadReleaseNotes,
   log,
   preScripts,
+  pushChanges,
   verifyBranch,
   verifyNoUncommittedChanges,
 } from "./utils";
@@ -78,5 +80,6 @@ export const git = simpleGit(process.cwd());
   const releaseNotes = await loadReleaseNotes();
   await bumpVersion();
   await commitChanges(newVersion);
-  console.log(ghToken);
+  await createTag(newVersion);
+  await pushChanges();
 })();
