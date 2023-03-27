@@ -88,10 +88,12 @@ export const loadReleaseNotes = async () => {
 
   const releaseNotes = await fs.readFile(options.releaseNotesSource, { encoding: "utf-8" });
 
-  if (options.releaseNotesTemplate && !options.dryRun) {
-    const template = await fs.readFile(options.releaseNotesTemplate, { encoding: "utf-8" });
-    await fs.writeFile(options.releaseNotesSource, template, { encoding: "utf-8" });
+  if (!options.dryRun) {
     log(`> ~~Reset Release notes file~~`);
+    const template = options.releaseNotesTemplate
+      ? await fs.readFile(options.releaseNotesTemplate, { encoding: "utf-8" })
+      : "";
+    await fs.writeFile(options.releaseNotesSource, template, { encoding: "utf-8" });
   }
 
   log(`> ~~Release notes~~`);
