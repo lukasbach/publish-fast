@@ -9,6 +9,7 @@ import { Bump, Options } from "./types";
 import {
   bumpVersion,
   commitChanges,
+  createGithubRelease,
   createTag,
   getGithubRepoAndUser,
   getGithubToken,
@@ -19,6 +20,7 @@ import {
   log,
   preScripts,
   pushChanges,
+  updateChangelog,
   verifyBranch,
   verifyNoUncommittedChanges,
 } from "./utils";
@@ -40,6 +42,11 @@ program
   .option(
     "--release-notes-template <release-notes-template>",
     "path to release notes template markdown file. Leave empty to not recreate the file after publishing."
+  )
+  .option(
+    "--changelog <changelog>",
+    "path to changelog file. Leave empty to not update changelog. Will automatically be skipped if file doesn't exist.",
+    "CHANGELOG.md"
   )
   .option(
     "--github-token <github-token>",
@@ -70,7 +77,7 @@ export const git = simpleGit(process.cwd());
   const { repoUser, repoName } = await getGithubRepoAndUser(packageJson);
 
   const currentVersion = packageJson.version;
-  const newVersion = inc(currentVersion, bump);
+  const newVersion = inc(currentVersion, bump)!;
 
   log(`__github.com/${repoUser}/${repoName}, using ${packageManager}__`);
   log(`Bumping **${packageJson.name}** from **${currentVersion}** to **${newVersion}**`);
@@ -82,7 +89,15 @@ export const git = simpleGit(process.cwd());
   await preScripts(packageManager);
   const releaseNotes = await loadReleaseNotes();
   await bumpVersion();
+  await updateChangelog({ releaseNotes, newVersion, owner: repoUser, repo: repoName, oldVersion: currentVersion });
   await commitChanges(newVersion);
   await createTag(newVersion);
   await pushChanges();
+  await createGithubRelease({
+    releaseNotes,
+    owner: repoUser,
+    repo: repoName,
+    token: ghToken,
+    version: newVersion,
+  });
 })();

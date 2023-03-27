@@ -103,6 +103,37 @@ export const loadReleaseNotes = async () => {
   return releaseNotes;
 };
 
+export const updateChangelog = async (opts: {
+  releaseNotes: string;
+  oldVersion: string;
+  newVersion: string;
+  repo: string;
+  owner: string;
+}) => {
+  if (!options.changelog) {
+    return;
+  }
+
+  if (!fs.existsSync(options.changelog)) {
+    log(`Changelog file does not exist, skipping updating the Changelog.`);
+  }
+
+  if (options.dryRun) {
+    log(`> ~~Skipping updating the Changelog~~`);
+    return;
+  }
+
+  log(`> ~~Updating the Changelog~~`);
+
+  const changelog = await fs.readFile(options.changelog, { encoding: "utf-8" });
+  const title = `## [${opts.newVersion}](https://github.com/${opts.owner}/${opts.repo}/compare/${opts.oldVersion}...${
+    opts.newVersion
+  }) (${new Date().toISOString().split("T")[0]})`;
+  const newChangelog = `${title}\n\n${opts.releaseNotes}\n\n\n${changelog}`;
+
+  await fs.writeFile(options.changelog, newChangelog, { encoding: "utf-8" });
+};
+
 export const bumpVersion = async () => {
   if (options.skipBump) {
     return;
@@ -113,6 +144,20 @@ export const bumpVersion = async () => {
     packageManager: "npm",
     arguments: {
       all: ["version", bump],
+    },
+  });
+};
+
+export const npmPublish = async () => {
+  if (options.skipPublish) {
+    return;
+  }
+
+  log(`> ~~Publishing package~~`);
+  await run({
+    packageManager: "npm",
+    arguments: {
+      all: ["publish"],
     },
   });
 };
@@ -149,11 +194,12 @@ export const getGithubToken = async () => {
     return "";
   }
 
-  return prompts({
+  const token = await prompts({
     type: "password",
     name: "value",
     message: "Enter a Github Token to create the release.",
   });
+  return token.value;
 };
 
 export const loadPackageJson = async () => fs.readJSON(path.join(process.cwd(), "package.json"));
@@ -278,7 +324,10 @@ export const createGithubRelease = async (opts: {
   const kit = new Octokit({
     token: opts.token,
   });
-  await kit.repos.createRelease({
+  const {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    data: { html_url },
+  } = await kit.repos.createRelease({
     owner: opts.owner,
     repo: opts.repo,
     tag_name: `v${opts.version}`,
@@ -288,4 +337,5 @@ export const createGithubRelease = async (opts: {
     draft: options.draftRelease,
     make_latest: "true",
   });
+  log(`__Github Release created__ ${html_url}`);
 };

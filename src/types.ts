@@ -19,6 +19,7 @@ export interface Options {
   branch: string;
   releaseNotesSource?: string;
   releaseNotesTemplate?: string;
+  changelog?: string;
   skipInstall: boolean;
   skipGithubRelease: boolean;
   skipPublish: boolean;
