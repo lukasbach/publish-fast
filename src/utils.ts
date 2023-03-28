@@ -156,8 +156,14 @@ export const npmPublish = async () => {
   log(`> ~~Publishing package~~`);
   await run({
     packageManager: "npm",
+    skipOnDry: false,
     arguments: {
-      all: ["publish"],
+      all: [
+        "publish",
+        options.dryRun ? "--dry-run" : null,
+        options.npmAccess ? `--access ${options.npmAccess}` : null,
+        `--tag ${options.npmTag}`,
+      ].filter<string>(Boolean as any),
     },
   });
 };

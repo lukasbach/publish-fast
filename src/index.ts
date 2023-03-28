@@ -18,6 +18,7 @@ import {
   loadPackageJson,
   loadReleaseNotes,
   log,
+  npmPublish,
   preScripts,
   pushChanges,
   updateChangelog,
@@ -53,6 +54,9 @@ program
     "github token for creating github release. If not provided, CLI will attempt to load through gh CLI, or alternatively interactively ask."
   )
   .option("--draft-release", "create github release as draft", false)
+  .option("--npm-tag <npm-tag>", "npm tag to publish to", "latest")
+  .option("--npm-access <npm-access>", "npm access level")
+  .option("--otp <npm-otp>", "npm otp code")
   .option("--skip-install", "skip installing dependencies", false)
   .option("--skip-github-release", "skip creating github release", false)
   .option("--skip-publish", "skip publishing to npm", false)
@@ -84,11 +88,12 @@ export const git = simpleGit(process.cwd());
 
   const ghToken = await getGithubToken();
   await verifyBranch();
-  // await verifyNoUncommittedChanges();
+  await verifyNoUncommittedChanges();
   await installDeps(packageManager);
   await preScripts(packageManager);
   const releaseNotes = await loadReleaseNotes();
   await bumpVersion();
+  await npmPublish();
   await updateChangelog({ releaseNotes, newVersion, owner: repoUser, repo: repoName, oldVersion: currentVersion });
   await commitChanges(newVersion);
   await createTag(newVersion);

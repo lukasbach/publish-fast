@@ -28,4 +28,7 @@ export interface Options {
   skipCommit: boolean;
   githubToken?: string;
   draftRelease?: boolean;
+  npmTag?: string;
+  npmAccess?: string;
+  otp?: string;
 }
