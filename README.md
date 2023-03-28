@@ -2,9 +2,6 @@
 
 > A straight forward tool for streamlining the publishing of NPM packages without a lot of setup and work
 
-![Verify](https://github.com/lukasbach/publish-fast/workflows/verify/badge.svg)
-![Publish](https://github.com/lukasbach/publish-fast/workflows/publish/badge.svg)
-
 This project is inspired by [np](https://github.com/sindresorhus/np), and pretty much does the same thing,
 except that publish-fast is suitable to run in CI, directly creates a github release from a local template
 instead of just drafting one, and automatically updates a changelog file. It thus does more stuff automatically
