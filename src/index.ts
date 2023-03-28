@@ -92,12 +92,12 @@ export const git = simpleGit(process.cwd());
   await installDeps(packageManager);
   await preScripts(packageManager);
   await bumpVersion();
-  await npmPublish();
   const releaseNotes = await loadReleaseNotes();
   await updateChangelog({ releaseNotes, newVersion, owner: repoUser, repo: repoName, oldVersion: currentVersion });
   await commitChanges(newVersion);
   await createTag(newVersion);
   await pushChanges();
+  await npmPublish();
   await createGithubRelease({
     releaseNotes,
     owner: repoUser,
