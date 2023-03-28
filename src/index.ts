@@ -27,8 +27,15 @@ import {
   verifyNoUncommittedChanges,
 } from "./utils";
 
+let cliVersion: string;
+try {
+  cliVersion = JSON.parse(fs.readFileSync(path.join(__dirname, "../package.json"), { encoding: "utf-8" })).version;
+} catch (e) {
+  cliVersion = "unknown";
+}
+
 program
-  .version(JSON.parse(fs.readFileSync(path.join(__dirname, "../package.json"), { encoding: "utf-8" })).version)
+  .version(cliVersion)
   .option("--verbose", "verbose output", false)
   .option("--dry-run", "dry run", false)
   .option("--package-manager <package-manager>", "package manager, detected from lock file by default", "auto")
