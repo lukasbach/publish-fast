@@ -328,27 +328,30 @@ export const createGithubRelease = async (opts: {
 
   log(`> ~~Creating Github Release~~`);
 
+  const { current } = await git.branch();
+
+  const release = {
+    owner: opts.owner,
+    repo: opts.repo,
+    tag_name: `v${opts.version}`,
+    name: `v${opts.version}`,
+    target_commitish: current,
+    draft: options.draftRelease,
+    make_latest: "true",
+  } as const;
+
   if (options.dryRun) {
     log(`**Skipping creating github release**`);
+    log(`**Github release data:**\n${JSON.stringify(release, null, 2)}`);
     return;
   }
 
-  const { current } = await git.branch();
   const kit = new Octokit({
     token: opts.token,
   });
   const {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     data: { html_url },
-  } = await kit.repos.createRelease({
-    owner: opts.owner,
-    repo: opts.repo,
-    tag_name: `v${opts.version}`,
-    name: `v${opts.version}`,
-    target_commitish: current,
-    body: opts.releaseNotes,
-    draft: options.draftRelease,
-    make_latest: "true",
-  });
+  } = await kit.repos.createRelease({ ...release, body: opts.releaseNotes });
   log(`__Github Release created__ ${html_url}`);
 };
