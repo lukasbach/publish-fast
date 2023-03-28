@@ -5,17 +5,61 @@
 ![Verify](https://github.com/lukasbach/publish-fast/workflows/verify/badge.svg)
 ![Publish](https://github.com/lukasbach/publish-fast/workflows/publish/badge.svg)
 
+This project is inspired by [np](https://github.com/sindresorhus/np), and pretty much does the same thing,
+except that publish-fast is suitable to run in CI, directly creates a github release from a local template
+instead of just drafting one, and automatically updates a changelog file. It thus does more stuff automatically
+without much manual effort, and is more suitable to run in automated workflows.
+
+![pf-release.gif](pf-release.gif)
+
+## Features
+
+- Automatically bumps version, creates a commit, creates a tag, and pushes it to the remote
+- A list of scripts to be run before the release can be provided (e.g. "lint,test")
+- Supports npm, yarn and pnpm
+- Automatically checks that the user is on the correct branch before releasing
+- Automatically checks that the working directory is clean before releasing
+- Loads release notes from a local file, and clears that file after publishing to an empty file or a predefined template
+- Can update a local changelog file with release notes
+- Can create a github release with release notes
+- Dry Run mode
+- Almost all steps can be skipped
+
+## Release Notes Workflow
+
+This tool supports to automatically read release notes to be used in the changelog and github release.
+Create a file in your repo, e.g. `release-notes.md`. There, every time you add new changes to your project,
+document the changes you made in that file.
+
+When running `publish-fast` to create a new release, use the option `--release-notes-source release-notes.md`.
+Remember that you can create a script alias in your package.json for the release script, so you don't need to
+pass that every time. The release notes will be read from that file, and then the file will be cleared to an empty
+file.
+
+You can also define a template to which the release notes will be reset after the release instead of clearing it.
+Use the option `--release-notes-template release-notes-template.md` to do that.
+
 ## How to use
 
-Install globally via
+You can install `publish-fast` as dependency to your project, 
+
+    npm install publish-fast
+
+and then add a script to your `package.json`:
+
+    "scripts": {
+      "release": "publish-fast patch"
+    }
+
+Then you can run `yarn release` or `npm run release` to publish a new version.
+
+You can also install it globally via
 
     npm install -g publish-fast
 
 or directly use via
 
     npx publish-fast
-
-TODO You can also [download a prebuilt binary](https://github.com/lukasbach/publish-fast/releases) and run that.
 
 Usage:
     Usage: publish-fast [options] [bump]
@@ -54,6 +98,10 @@ Usage:
       --skip-commit                                      skip committing changes (default: false)
       -h, --help                                         display help for command
 
+## Dry Run Demo
+
+![pf-dryrun.gif](pf-dryrun.gif)
+
 ## How to develop
 
 - `yarn` to install dependencies
@@ -61,5 +109,4 @@ Usage:
 - `yarn test` to run tests
 - `yarn lint` to test and fix linter errors
 
-To publish a new version, the publish pipeline can be manually
-invoked.
+To publish a new version, run `yarn release`.

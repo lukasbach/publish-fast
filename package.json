@@ -1,7 +1,7 @@
 {
   "name": "publish-fast",
   "version": "0.0.8",
-  "description": "TODO",
+  "description": "A straight forward tool for streamlining the publishing of NPM packages without a lot of setup and work",
   "bin": "lib/cjs/index.js",
   "main": "lib/cjs/index.js",
   "module": "lib/esm/index.js",
