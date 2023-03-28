@@ -29,25 +29,15 @@
     "clean": "rimraf ./lib/ ./exec/"
   },
   "devDependencies": {
+    "@lukasbach/eslint-config-deps": "^0.0.9",
     "@types/colors": "^1.2.1",
     "@types/node": "^18.8.5",
     "@types/prompts": "^2.4.3",
     "@types/semver": "^7.3.13",
-    "@typescript-eslint/eslint-plugin": "^5.40.0",
-    "@typescript-eslint/parser": "^5.40.0",
     "esbuild": "^0.17.14",
     "esbuild-runner": "^2.2.2",
     "eslint": "^8.25.0",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-airbnb-typescript": "^17.0.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-jsx-a11y": "^6.6.1",
-    "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-react": "^7.31.10",
-    "eslint-plugin-react-hooks": "^4.6.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.7.1",
     "rimraf": "^3.0.2",
     "typescript": "^4.8.4"
   },
@@ -61,6 +51,16 @@
     "prompts": "^2.4.2",
     "semver": "^7.3.8",
     "simple-git": "^3.17.0"
+  },
+  "eslintConfig": {
+    "extends": "@lukasbach/base",
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    "rules": {
+      "import/no-cycle": "off"
+    },
+    "ignorePatterns": ["lib", "*.js"]
   },
   "volta": {
     "node": "18.15.0",
