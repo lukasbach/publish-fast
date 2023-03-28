@@ -23,6 +23,7 @@ import {
   pushChanges,
   updateChangelog,
   verifyBranch,
+  verifyGithubToken,
   verifyNoUncommittedChanges,
 } from "./utils";
 
@@ -87,6 +88,7 @@ export const git = simpleGit(process.cwd());
   log(`Bumping **${packageJson.name}** from **${currentVersion}** to **${newVersion}**`);
 
   const ghToken = await getGithubToken();
+  await verifyGithubToken(ghToken);
   await verifyBranch();
   await verifyNoUncommittedChanges();
   await installDeps(packageManager);

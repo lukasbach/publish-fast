@@ -208,6 +208,12 @@ export const getGithubToken = async () => {
   return token.value;
 };
 
+export const verifyGithubToken = async (token: string) => {
+  const kit = new Octokit({ auth: token });
+  const { headers } = await kit.request("GET /user");
+  console.log(headers["x-oauth-scopes"]);
+};
+
 export const loadPackageJson = async () => fs.readJSON(path.join(process.cwd(), "package.json"));
 
 export const getRepoUrl = async (packageJson: any) => {
