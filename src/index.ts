@@ -33,8 +33,8 @@ program
   .option("--package-manager <package-manager>", "package manager, detected from lock file by default", "auto")
   .option("--pre-scripts <pre-scripts>", "pre scripts seperated by commas (e.g. lint,test)", "lint,test")
   .option("--commit-message <commit-message>", "new version commit message", "chore(release): {version}")
-  .option("--commit-author <commit-author>", "new version commit author", "bump")
-  .option("--commit-email <commit-email>", "new version commit email", "bump@noreply.com")
+  .option("--commit-author <commit-author>", "new version commit author")
+  .option("--commit-email <commit-email>", "new version commit email")
   .option("--branch <branch>", "release branch, for verification", "main")
   .option(
     "--release-notes-source <release-notes-source>",

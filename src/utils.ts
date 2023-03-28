@@ -273,7 +273,14 @@ export const commitChanges = async version => {
   }
 
   await git.add("./*");
-  await git.addConfig("user.name", options.commitAuthor).addConfig("user.email", options.commitEmail).commit(msg);
+
+  if (options.commitAuthor) {
+    await git.addConfig("user.name", options.commitAuthor);
+  }
+  if (options.commitEmail) {
+    await git.addConfig("user.email", options.commitEmail);
+  }
+  await git.commit(msg);
 };
 
 export const createTag = async version => {

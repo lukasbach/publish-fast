@@ -14,8 +14,8 @@ export interface Options {
   packageManager: string;
   preScripts: string;
   commitMessage: string;
-  commitAuthor: string;
-  commitEmail: string;
+  commitAuthor?: string;
+  commitEmail?: string;
   branch: string;
   releaseNotesSource?: string;
   releaseNotesTemplate?: string;
