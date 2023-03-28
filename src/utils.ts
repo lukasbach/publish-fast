@@ -268,7 +268,11 @@ export const commitChanges = async version => {
   const msg = (options.commitMessage ?? "").replace("{version}", version);
 
   if (options.dryRun) {
-    log(`**Skipping git commit with message** __${msg}__ from __${options.commitAuthor} <${options.commitEmail}>__`);
+    log(
+      `**Skipping git commit with message** __${msg}__ from __${options.commitAuthor ?? "default"} <${
+        options.commitEmail ?? "default"
+      }>__`
+    );
     return;
   }
 
@@ -349,9 +353,13 @@ export const createGithubRelease = async (opts: {
   const kit = new Octokit({
     token: opts.token,
   });
-  const {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    data: { html_url },
-  } = await kit.repos.createRelease({ ...release, body: opts.releaseNotes });
-  log(`__Github Release created__ ${html_url}`);
+  console.log(opts.token);
+  let response: any;
+  try {
+    response = await kit.repos.createRelease({ ...release, body: opts.releaseNotes });
+  } catch (e) {
+    console.log(e);
+    console.log(response);
+  }
+  log(`__Github Release created__ ${response.data.html_url}`);
 };
