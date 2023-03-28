@@ -1,3 +1,8 @@
+## [0.0.10](https://github.com/lukasbach/publish-fast/compare/0.0.9...0.0.10) (2023-03-28)
+
+
+
+
 ## [0.0.9](https://github.com/lukasbach/publish-fast/compare/0.0.8...0.0.9) (2023-03-28)
 
 
