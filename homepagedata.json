@@ -1,0 +1,6 @@
+{
+  "repo": "publish-fast",
+  "category": "cli",
+  "npm": "publish-fast",
+  "cliexample": "npx publish-fast patch"
+}
