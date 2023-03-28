@@ -1,3 +1,21 @@
+## [0.0.8](https://github.com/lukasbach/publish-fast/compare/0.0.7...0.0.8) (2023-03-28)
+
+## Features
+
+* Add documentation in readme
+* Do some other stuff
+
+## Bug Fixes
+
+* Quite a few
+* And some more
+
+## Other changes
+
+* Introduced new bugs to fix later
+
+
+
 ## [0.0.7](https://github.com/lukasbach/publish-fast/compare/0.0.6...0.0.7) (2023-03-28)
 
 
