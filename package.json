@@ -16,6 +16,7 @@
   ],
   "scripts": {
     "start": "esr src/index.ts --dry-run --pre-scripts=test --release-notes-source=releasenotes.md",
+    "release": "esr src/index.ts --pre-scripts=test --release-notes-source=releasenotes.md",
     "build": "run-s \"build:*\"",
     "build:cjs": "tsc --outDir lib/cjs",
     "build:esm": "tsc -m es2015 --outDir lib/esm",
