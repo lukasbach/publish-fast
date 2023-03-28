@@ -143,7 +143,7 @@ export const bumpVersion = async () => {
   await run({
     packageManager: "npm",
     arguments: {
-      all: ["version", bump, "--git-tag-version false", "--commit-hooks false"],
+      all: ["version", bump, "--git-tag-version false", "-no-git-tag-version", "--commit-hooks false"],
     },
   });
 };
