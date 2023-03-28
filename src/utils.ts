@@ -98,7 +98,7 @@ export const loadReleaseNotes = async () => {
   }
 
   log(`> ~~Release notes~~`);
-  log(releaseNotes);
+  log(releaseNotes || "(empty)");
 
   return releaseNotes;
 };
