@@ -211,7 +211,11 @@ export const getGithubToken = async () => {
 export const verifyGithubToken = async (token: string) => {
   const kit = new Octokit({ auth: token });
   const { headers } = await kit.request("GET /user");
-  console.log(headers["x-oauth-scopes"]);
+  const scopes = headers["x-oauth-scopes"]?.split(", ") ?? [];
+  if (!scopes.includes("repo")) {
+    log(`The provided Github token does not have the "repo" scope.`);
+    process.exit(1);
+  }
 };
 
 export const loadPackageJson = async () => fs.readJSON(path.join(process.cwd(), "package.json"));
@@ -357,15 +361,8 @@ export const createGithubRelease = async (opts: {
   }
 
   const kit = new Octokit({
-    token: opts.token,
+    auth: opts.token,
   });
-  console.log(opts.token);
-  let response: any;
-  try {
-    response = await kit.repos.createRelease({ ...release, body: opts.releaseNotes });
-  } catch (e) {
-    console.log(e);
-    console.log(response);
-  }
+  const response = await kit.repos.createRelease({ ...release, body: opts.releaseNotes });
   log(`__Github Release created__ ${response.data.html_url}`);
 };
