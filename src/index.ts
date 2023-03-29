@@ -90,6 +90,10 @@ export const git = simpleGit(process.cwd());
   const bump = (program.processedArgs[0] as Bump) ?? (await promptBump(currentVersion)).bumpType;
   const newVersion = inc(currentVersion, bump)!;
 
+  if (options.dryRun) {
+    log("**Dry Run**");
+  }
+
   log(`__github.com/${repoUser}/${repoName}, using ${packageManager}__`);
   log(`Bumping **${packageJson.name}** from **${currentVersion}** to **${newVersion}**`);
 
