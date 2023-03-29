@@ -41,7 +41,7 @@ export const run = async (opts: {
     return;
   }
   await execa(opts.packageManager, opts.arguments[opts.packageManager] ?? opts.arguments.all ?? opts.arguments.npm, {
-    stdout: "ignore",
+    stdout: options.pipeStdout ? "inherit" : "ignore",
     stderr: "inherit",
     ...opts.options,
   });

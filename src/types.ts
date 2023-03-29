@@ -32,4 +32,5 @@ export interface Options {
   npmAccess?: string;
   otp?: string;
   releaseAssets?: string;
+  pipeStdout: boolean;
 }
