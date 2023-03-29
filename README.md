@@ -38,6 +38,15 @@ file.
 You can also define a template to which the release notes will be reset after the release instead of clearing it.
 Use the option `--release-notes-template release-notes-template.md` to do that.
 
+## Github Token
+
+If uploading a github release is enabled, the tool needs a valid Github Auth token. If you run the tool on your
+dev machine, the easiest way is to install the [gh cli](https://cli.github.com/) and run `gh auth login` to
+create a token. Then, the tool will automatically use that token.
+
+If you do not want to install the Github CLI, you can pass the token via the `--github-token` option. Alternatively,
+the tool will interactively ask for the token when run.
+
 ## How to use
 
 You can install `publish-fast` as dependency to your project, 
