@@ -6,9 +6,12 @@ import prompts from "prompts";
 import { Octokit } from "@octokit/rest";
 import mime from "mime";
 import { glob } from "glob";
-import { bump, git, options } from "./index";
+import { inc } from "semver";
+import { git, options } from "./index";
+import { Bump } from "./types";
 
 export const log = (message: string) => {
+  // eslint-disable-next-line no-console
   console.log(
     message
       .replace(/\*\*(.*?)\*\*/g, cyan("$1"))
@@ -41,6 +44,18 @@ export const run = async (opts: {
     stdout: "ignore",
     stderr: "inherit",
     ...opts.options,
+  });
+};
+
+export const promptBump = async (currentVersion) => {
+  return prompts({
+    type: "list",
+    name: "Bump type",
+    message: "Choose which new version to release",
+    choices: [Bump.Patch, Bump.Minor, Bump.Major, Bump.Prerelease].map((bump) => ({
+      title: `${bump} (${currentVersion} -> ${inc(currentVersion, bump)})`,
+      value: bump,
+    })),
   });
 };
 
@@ -136,7 +151,7 @@ export const updateChangelog = async (opts: {
   await fs.writeFile(options.changelog, newChangelog, { encoding: "utf-8" });
 };
 
-export const bumpVersion = async () => {
+export const bumpVersion = async (bump: Bump) => {
   if (options.skipBump) {
     return;
   }
@@ -430,6 +445,6 @@ export const uploadReleaseAssets = async (opts: {
 
   log(`Found ${assets.length} assets to upload`);
   for (const asset of assets) {
-    await uploadReleaseAsset({ ...opts, file: asset });
+    await uploadReleaseAsset({ ...opts, releaseId: opts.releaseId, file: asset });
   }
 };

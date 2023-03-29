@@ -20,6 +20,7 @@ import {
   log,
   npmPublish,
   preScripts,
+  promptBump,
   pushChanges,
   updateChangelog,
   uploadReleaseAssets,
@@ -73,15 +74,9 @@ program
   .option("--skip-bump", "skip bumping version", false)
   .option("--skip-push", "skip pushing changes", false)
   .option("--skip-commit", "skip committing changes", false)
-  .addArgument(
-    new Argument("bump")
-      .argParser((bump) => bump as Bump)
-      .argOptional()
-      .default(Bump.Patch)
-  );
+  .addArgument(new Argument("bump").argParser((bump) => bump as Bump).argOptional());
 
 program.parse(process.argv);
-export const bump = program.processedArgs[0] as Bump;
 export const options = program.opts() as Options;
 export const git = simpleGit(process.cwd());
 
@@ -91,6 +86,7 @@ export const git = simpleGit(process.cwd());
   const { repoUser, repoName } = await getGithubRepoAndUser(packageJson);
 
   const currentVersion = packageJson.version;
+  const bump = (program.processedArgs[0] as Bump) ?? (await promptBump(currentVersion));
   const newVersion = inc(currentVersion, bump)!;
 
   log(`__github.com/${repoUser}/${repoName}, using ${packageManager}__`);
@@ -102,7 +98,7 @@ export const git = simpleGit(process.cwd());
   await verifyNoUncommittedChanges();
   await installDeps(packageManager);
   await preScripts(packageManager);
-  await bumpVersion();
+  await bumpVersion(bump);
   const releaseNotes = await loadReleaseNotes();
   await updateChangelog({ releaseNotes, newVersion, owner: repoUser, repo: repoName, oldVersion: currentVersion });
   await commitChanges(newVersion);
