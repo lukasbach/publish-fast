@@ -49,13 +49,15 @@ export const run = async (opts: {
 
 export const promptBump = async (currentVersion) => {
   return prompts({
-    type: "list",
-    name: "Bump type",
+    type: "select",
+    name: "bumpType",
     message: "Choose which new version to release",
-    choices: [Bump.Patch, Bump.Minor, Bump.Major, Bump.Prerelease].map((bump) => ({
-      title: `${bump} (${currentVersion} -> ${inc(currentVersion, bump)})`,
-      value: bump,
-    })),
+    choices: [Bump.Patch, Bump.Minor, Bump.Major, Bump.PrePatch, Bump.PreMinor, Bump.PreMajor, Bump.Prerelease].map(
+      (bump) => ({
+        title: `${bump} (${currentVersion} -> ${inc(currentVersion, bump)})`,
+        value: bump,
+      })
+    ),
   });
 };
 

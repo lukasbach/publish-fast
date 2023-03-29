@@ -67,7 +67,7 @@ program
   .option("--npm-tag <npm-tag>", "npm tag to publish to", "latest")
   .option("--npm-access <npm-access>", "npm access level")
   .option("--otp <npm-otp>", "npm otp code")
-  .option("--release-assets", "glob for release assets to upload to the github release")
+  .option("--release-assets <glob>", "glob for release assets to upload to the github release")
   .option("--skip-install", "skip installing dependencies", false)
   .option("--skip-github-release", "skip creating github release", false)
   .option("--skip-publish", "skip publishing to npm", false)
@@ -86,7 +86,7 @@ export const git = simpleGit(process.cwd());
   const { repoUser, repoName } = await getGithubRepoAndUser(packageJson);
 
   const currentVersion = packageJson.version;
-  const bump = (program.processedArgs[0] as Bump) ?? (await promptBump(currentVersion));
+  const bump = (program.processedArgs[0] as Bump) ?? (await promptBump(currentVersion)).bumpType;
   const newVersion = inc(currentVersion, bump)!;
 
   log(`__github.com/${repoUser}/${repoName}, using ${packageManager}__`);
