@@ -133,7 +133,9 @@ export const updateChangelog = async (opts: {
     return;
   }
 
-  if (!fs.existsSync(options.changelog)) {
+  const changelogPath = path.join(process.cwd(), options.changelog);
+
+  if (!fs.existsSync(changelogPath)) {
     log(`Changelog file does not exist, skipping updating the Changelog.`);
   }
 
@@ -144,13 +146,13 @@ export const updateChangelog = async (opts: {
 
   log(`> ~~Updating the Changelog~~`);
 
-  const changelog = await fs.readFile(options.changelog, { encoding: "utf-8" });
+  const changelog = await fs.readFile(changelogPath, { encoding: "utf-8" });
   const title = `## [${opts.newVersion}](https://github.com/${opts.owner}/${opts.repo}/compare/${opts.oldVersion}...${
     opts.newVersion
   }) (${new Date().toISOString().split("T")[0]})`;
   const newChangelog = `${title}\n\n${opts.releaseNotes}\n\n\n${changelog}`;
 
-  await fs.writeFile(options.changelog, newChangelog, { encoding: "utf-8" });
+  await fs.writeFile(changelogPath, newChangelog, { encoding: "utf-8" });
 };
 
 export const bumpVersion = async (bump: Bump) => {
