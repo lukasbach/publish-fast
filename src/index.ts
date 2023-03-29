@@ -79,20 +79,26 @@ program
 
 program.parse(process.argv);
 const packageJson = loadPackageJson();
-export const options = { ...loadReleaseConfig(), ...(packageJson?.publish ?? {}), ...program.opts() } as Options;
+export const options = { ...program.opts(), ...loadReleaseConfig(), ...(packageJson?.publish ?? {}) } as Options;
 export const git = simpleGit(process.cwd());
+
+process.on("SIGINT", () => {
+  // eslint-disable-next-line no-console
+  console.log("Caught interrupt signal");
+  process.exit();
+});
 
 (async () => {
   const packageManager = getPackageManager();
   const { repoUser, repoName } = await getGithubRepoAndUser(packageJson);
 
-  const currentVersion = packageJson.version;
-  const bump = (program.processedArgs[0] as Bump) ?? (await promptBump(currentVersion)).bumpType;
-  const newVersion = inc(currentVersion, bump)!;
-
   if (options.dryRun) {
     log("**Dry Run**");
   }
+
+  const currentVersion = packageJson.version;
+  const bump = (program.processedArgs[0] as Bump) ?? (await promptBump(currentVersion)).bumpType;
+  const newVersion = inc(currentVersion, bump)!;
 
   log(`__github.com/${repoUser}/${repoName}, using ${packageManager}__`);
   log(`Bumping **${packageJson.name}** from **${currentVersion}** to **${newVersion}**`);
