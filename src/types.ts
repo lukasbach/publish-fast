@@ -31,4 +31,5 @@ export interface Options {
   npmTag?: string;
   npmAccess?: string;
   otp?: string;
+  releaseAssets?: string;
 }

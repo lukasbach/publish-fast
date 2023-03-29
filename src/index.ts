@@ -22,6 +22,7 @@ import {
   preScripts,
   pushChanges,
   updateChangelog,
+  uploadReleaseAssets,
   verifyBranch,
   verifyGithubToken,
   verifyNoUncommittedChanges,
@@ -65,6 +66,7 @@ program
   .option("--npm-tag <npm-tag>", "npm tag to publish to", "latest")
   .option("--npm-access <npm-access>", "npm access level")
   .option("--otp <npm-otp>", "npm otp code")
+  .option("--release-assets", "glob for release assets to upload to the github release")
   .option("--skip-install", "skip installing dependencies", false)
   .option("--skip-github-release", "skip creating github release", false)
   .option("--skip-publish", "skip publishing to npm", false)
@@ -73,7 +75,7 @@ program
   .option("--skip-commit", "skip committing changes", false)
   .addArgument(
     new Argument("bump")
-      .argParser(bump => bump as Bump)
+      .argParser((bump) => bump as Bump)
       .argOptional()
       .default(Bump.Patch)
   );
@@ -107,11 +109,17 @@ export const git = simpleGit(process.cwd());
   await createTag(newVersion);
   await pushChanges();
   await npmPublish();
-  await createGithubRelease({
+  const releaseId = await createGithubRelease({
     releaseNotes,
     owner: repoUser,
     repo: repoName,
     token: ghToken,
     version: newVersion,
+  });
+  await uploadReleaseAssets({
+    owner: repoUser,
+    repo: repoName,
+    token: ghToken,
+    releaseId,
   });
 })();

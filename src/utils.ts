@@ -4,6 +4,8 @@ import { cyan, gray, green } from "colors";
 import execa from "execa";
 import prompts from "prompts";
 import { Octokit } from "@octokit/rest";
+import mime from "mime";
+import { glob } from "glob";
 import { bump, git, options } from "./index";
 
 export const log = (message: string) => {
@@ -268,7 +270,7 @@ export const verifyBranch = async () => {
   log(`__Releasing from branch__ ${current}`);
 };
 
-export const commitChanges = async version => {
+export const commitChanges = async (version) => {
   if (options.skipCommit) {
     return;
   }
@@ -297,7 +299,7 @@ export const commitChanges = async version => {
   await git.commit(msg);
 };
 
-export const createTag = async version => {
+export const createTag = async (version) => {
   if (options.skipCommit) {
     return;
   }
@@ -337,7 +339,7 @@ export const createGithubRelease = async (opts: {
   repo: string;
 }) => {
   if (options.skipGithubRelease) {
-    return;
+    return null;
   }
 
   log(`> ~~Creating Github Release~~`);
@@ -357,7 +359,7 @@ export const createGithubRelease = async (opts: {
   if (options.dryRun) {
     log(`**Skipping creating github release**`);
     log(`**Github release data:**\n${JSON.stringify(release, null, 2)}`);
-    return;
+    return null;
   }
 
   const kit = new Octokit({
@@ -365,4 +367,69 @@ export const createGithubRelease = async (opts: {
   });
   const response = await kit.repos.createRelease({ ...release, body: opts.releaseNotes });
   log(`__Github Release created__ ${response.data.html_url}`);
+  return response.data.id;
+};
+
+export const uploadReleaseAsset = async (opts: {
+  token: string;
+  owner: string;
+  repo: string;
+  releaseId: number;
+  file: string;
+}) => {
+  if (options.dryRun) {
+    log(`**Skipping asset upload of ${opts.file}**`);
+    return;
+  }
+
+  log(`> ~~Uploading~~ __${opts.file}`);
+
+  const kit = new Octokit({
+    auth: opts.token,
+  });
+  const data = (await fs.readFile(opts.file)) as unknown as string;
+  const mediaType = mime.getType(opts.file);
+
+  if (!mediaType) {
+    log(`**Skipping asset upload of ${opts.file} because mime type is unknown**`);
+  }
+
+  await kit.repos.uploadReleaseAsset({
+    owner: opts.owner,
+    repo: opts.repo,
+    data,
+    release_id: opts.releaseId,
+    name: path.basename(opts.file),
+    headers: {
+      "content-type": mediaType!,
+      "content-length": fs.statSync(opts.file).size,
+    },
+  });
+};
+
+export const uploadReleaseAssets = async (opts: {
+  token: string;
+  owner: string;
+  repo: string;
+  releaseId: number | null;
+}) => {
+  if (!options.releaseAssets) {
+    return;
+  }
+
+  if (!opts.releaseId) {
+    log(`**Skipping uploading assets because github release didn't properly return.**`);
+    return;
+  }
+
+  const assets = await glob(options.releaseAssets);
+
+  if (options.skipGithubRelease) {
+    log(`**Skipping uploading ${assets.length} because github release is skipped.**`);
+  }
+
+  log(`Found ${assets.length} assets to upload`);
+  for (const asset of assets) {
+    await uploadReleaseAsset({ ...opts, file: asset });
+  }
 };
