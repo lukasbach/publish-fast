@@ -441,7 +441,7 @@ export const uploadReleaseAssets = async (opts: {
     return;
   }
 
-  if (!opts.releaseId) {
+  if (!opts.releaseId && !options.dryRun) {
     log(`**Skipping uploading assets because github release didn't properly return.**`);
     return;
   }
@@ -454,6 +454,6 @@ export const uploadReleaseAssets = async (opts: {
 
   log(`Found ${assets.length} assets to upload`);
   for (const asset of assets) {
-    await uploadReleaseAsset({ ...opts, releaseId: opts.releaseId, file: asset });
+    await uploadReleaseAsset({ ...opts, releaseId: opts.releaseId!, file: asset });
   }
 };
