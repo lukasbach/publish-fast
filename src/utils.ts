@@ -137,6 +137,7 @@ export const updateChangelog = async (opts: {
 
   if (!fs.existsSync(changelogPath)) {
     log(`Changelog file does not exist, skipping updating the Changelog.`);
+    return;
   }
 
   if (options.dryRun) {
