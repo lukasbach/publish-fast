@@ -19,8 +19,10 @@ without much manual effort, and is more suitable to run in automated workflows.
 - Loads release notes from a local file, and clears that file after publishing to an empty file or a predefined template
 - Can update a local changelog file with release notes
 - Can create a github release with release notes
+- Can upload assets to the github release defined by a glob option
 - Dry Run mode
 - Almost all steps can be skipped
+- Options can be passed in through a `.publishrc.json` file or the `publish` property in a `package.json` file
 
 ## Release Notes Workflow
 
@@ -94,6 +96,10 @@ Usage:
       --skip-push                                        skip pushing changes (default: false)
       --skip-commit                                      skip committing changes (default: false)
       -h, --help                                         display help for command
+
+You can also pass in options through a `.publishrc.json` file or the `publish` property in a `package.json` file.
+Note that all options, which are snake-case in the CLI, are camelCase in the config file, i.e. the `--release-notes-source`
+option becomes `releaseNotesSource` in the config file.
 
 ## Dry Run Demo
 

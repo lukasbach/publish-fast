@@ -237,7 +237,14 @@ export const verifyGithubToken = async (token: string) => {
   }
 };
 
-export const loadPackageJson = async () => fs.readJSON(path.join(process.cwd(), "package.json"));
+export const loadPackageJson = () => fs.readJSONSync(path.join(process.cwd(), "package.json"));
+export const loadReleaseConfig = () => {
+  const configPath = path.join(process.cwd(), ".publishrc.json");
+  if (!fs.existsSync(configPath)) {
+    return {};
+  }
+  return fs.readJSONSync(configPath);
+};
 
 export const getRepoUrl = async (packageJson: any) => {
   if (packageJson.repository && typeof packageJson.repository === "string") {

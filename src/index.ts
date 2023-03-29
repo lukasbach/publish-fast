@@ -16,6 +16,7 @@ import {
   getPackageManager,
   installDeps,
   loadPackageJson,
+  loadReleaseConfig,
   loadReleaseNotes,
   log,
   npmPublish,
@@ -77,12 +78,12 @@ program
   .addArgument(new Argument("bump").argParser((bump) => bump as Bump).argOptional());
 
 program.parse(process.argv);
-export const options = program.opts() as Options;
+const packageJson = loadPackageJson();
+export const options = { ...loadReleaseConfig(), ...(packageJson?.publish ?? {}), ...program.opts() } as Options;
 export const git = simpleGit(process.cwd());
 
 (async () => {
   const packageManager = getPackageManager();
-  const packageJson = await loadPackageJson();
   const { repoUser, repoName } = await getGithubRepoAndUser(packageJson);
 
   const currentVersion = packageJson.version;
