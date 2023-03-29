@@ -4,8 +4,9 @@
 
 This project is inspired by [np](https://github.com/sindresorhus/np), and pretty much does the same thing,
 except that publish-fast is suitable to run in CI, directly creates a github release from a local template
-instead of just drafting one, and automatically updates a changelog file. It thus does more stuff automatically
-without much manual effort, and is more suitable to run in automated workflows.
+instead of just drafting one, supports uploading release assets, automatically updates a changelog file
+and supports config files. It thus does more stuff automatically without much manual effort, and is more 
+suitable to run in automated workflows.
 
 ![pf-release.gif](pf-release.gif)
 
