@@ -17,7 +17,7 @@
   "scripts": {
     "start": "esr src/index.ts --dry-run --pre-scripts=test --release-notes-source=releasenotes.md",
     "release": "esr src/index.ts --pre-scripts=test --release-notes-source=releasenotes.md",
-    "release-with-assets": "esr src/index.ts --pre-scripts=test --release-assets=\"*.gif\"",
+    "release-with-assets": "esr src/index.ts --pre-scripts=test --release-assets=\"*.json\"",
     "docs": "esr src/index.ts --help",
     "build": "run-s \"build:*\"",
     "build:cjs": "tsc --outDir lib/cjs",

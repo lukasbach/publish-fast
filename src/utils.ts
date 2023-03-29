@@ -399,7 +399,7 @@ export const uploadReleaseAsset = async (opts: {
     return;
   }
 
-  log(`> ~~Uploading~~ __${opts.file}`);
+  log(`> ~~Uploading~~ __${opts.file}__`);
 
   const kit = new Octokit({
     auth: opts.token,
