@@ -285,19 +285,17 @@ export const verifyNoUncommittedChanges = async () => {
 };
 
 export const verifyBranchUpToDate = async () => {
-  await git.fetch();
-  const { current: branch } = await git.branch();
-  const localCommit = await git.revparse(["--verify", "HEAD"]);
-  const remoteCommit = await git.revparse(["--verify", `origin/${branch}`]);
+  const { updated } = await git.fetch();
+  const changesDetected = updated.length > 0;
 
-  if (localCommit !== remoteCommit && options.dryRun) {
+  if (changesDetected && options.dryRun) {
     log(
       `The local branch is not up to date with the remote. Normally this fails the release process. Continuing anyway due to dry run.`
     );
     return;
   }
 
-  if (localCommit !== remoteCommit) {
+  if (changesDetected) {
     log(`The local branch is not up to date with the remote. Please pull the latest changes from the remote.`);
     process.exit(1);
   }
