@@ -332,13 +332,14 @@ export const createTag = async (version) => {
   }
 
   log(`> ~~Creating tag~~`);
+  const tagName = options.noVersionPrefix ? version : `v${version}`;
 
   if (options.dryRun) {
-    log(`**Skipping creating a tag** __v${version}__`);
+    log(`**Skipping creating a tag** __${tagName}__`);
     return;
   }
 
-  await git.addTag(`v${version}`);
+  await git.addTag(tagName);
 };
 
 export const pushChanges = async () => {
@@ -373,11 +374,12 @@ export const createGithubRelease = async (opts: {
 
   const { current } = await git.branch();
 
+  const name = options.noVersionPrefix ? opts.version : `v${opts.version}`;
   const release = {
     owner: opts.owner,
     repo: opts.repo,
-    tag_name: `v${opts.version}`,
-    name: `v${opts.version}`,
+    tag_name: name,
+    name,
     target_commitish: current,
     draft: options.draftRelease,
     make_latest: "true",

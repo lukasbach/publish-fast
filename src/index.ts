@@ -70,6 +70,11 @@ program
   .option("--otp <npm-otp>", "npm otp code")
   .option("--release-assets <glob>", "glob for release assets to upload to the github release")
   .option("--pipe-stdout", "pipe stdout of child processes through", false)
+  .option(
+    "--no-version-prefix",
+    'dont prefix the version with "v" (i.e. 1.0.0 instead of v1.0.0) in tag and github release name',
+    false
+  )
   .option("--skip-install", "skip installing dependencies", false)
   .option("--skip-github-release", "skip creating github release", false)
   .option("--skip-publish", "skip publishing to npm", false)

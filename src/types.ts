@@ -33,4 +33,5 @@ export interface Options {
   otp?: string;
   releaseAssets?: string;
   pipeStdout: boolean;
+  noVersionPrefix?: boolean;
 }
