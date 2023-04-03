@@ -14,6 +14,22 @@
     "lib/**/*",
     "!lib/**/*.spec.js"
   ],
+  "tags": [
+    "github",
+    "cli",
+    "npm",
+    "workflow",
+    "build",
+    "yarn",
+    "changelog",
+    "ci",
+    "deploy",
+    "release",
+    "tag",
+    "publish",
+    "release-notes",
+    "pnpm"
+  ],
   "scripts": {
     "start": "esr src/index.ts --dry-run --pre-scripts=test --release-notes-source=releasenotes.md",
     "release": "esr src/index.ts --pre-scripts=test --release-notes-source=releasenotes.md",
