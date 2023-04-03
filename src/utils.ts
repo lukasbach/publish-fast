@@ -462,3 +462,25 @@ export const uploadReleaseAssets = async (opts: {
     await uploadReleaseAsset({ ...opts, releaseId: opts.releaseId!, file: asset });
   }
 };
+
+export const verifyPrompt = async () => {
+  if (options.dryRun) {
+    return;
+  }
+
+  if (options.yes) {
+    log(`**Skipping verification prompt because --yes was passed**`);
+  }
+
+  const { value } = await prompts({
+    type: "confirm",
+    name: "value",
+    message: "Are you sure you want to release?",
+    initial: false,
+  });
+
+  if (!value) {
+    log(`**Aborting release**`);
+    process.exit(1);
+  }
+};

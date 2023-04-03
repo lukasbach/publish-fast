@@ -34,4 +34,5 @@ export interface Options {
   releaseAssets?: string;
   pipeStdout: boolean;
   noVersionPrefix?: boolean;
+  yes?: boolean;
 }

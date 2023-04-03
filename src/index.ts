@@ -28,6 +28,7 @@ import {
   verifyBranch,
   verifyGithubToken,
   verifyNoUncommittedChanges,
+  verifyPrompt,
 } from "./utils";
 
 let cliVersion: string;
@@ -75,6 +76,7 @@ program
     'dont prefix the version with "v" (i.e. 1.0.0 instead of v1.0.0) in tag and github release name',
     false
   )
+  .option("--yes", "skip verify prompt", false)
   .option("--skip-install", "skip installing dependencies", false)
   .option("--skip-github-release", "skip creating github release", false)
   .option("--skip-publish", "skip publishing to npm", false)
@@ -106,13 +108,16 @@ process.on("SIGINT", () => {
   const bump = (program.processedArgs[0] as Bump) ?? (await promptBump(currentVersion)).bumpType;
   const newVersion = inc(currentVersion, bump)!;
 
-  log(`__github.com/${repoUser}/${repoName}, using ${packageManager}__`);
-  log(`Bumping **${packageJson.name}** from **${currentVersion}** to **${newVersion}**`);
+  log(`__using ${packageManager}__`);
+  log(
+    `Bumping **${packageJson.name}** (__github.com/${repoUser}/${repoName}__) from **${currentVersion}** to **${newVersion}**`
+  );
 
   const ghToken = await getGithubToken();
   await verifyGithubToken(ghToken);
   await verifyBranch();
   await verifyNoUncommittedChanges();
+  await verifyPrompt();
   await installDeps(packageManager);
   await preScripts(packageManager);
   await bumpVersion(bump);
