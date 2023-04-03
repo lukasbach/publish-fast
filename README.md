@@ -25,6 +25,12 @@ suitable to run in automated workflows.
 - Almost all steps can be skipped
 - Options can be passed in through a `.publishrc.json` file or the `publish` property in a `package.json` file
 
+## Caveats
+
+- The tool is currently opinionated about using github, and doesn't support other git hosting services
+- There is no support for reading changelog data from commit messages. The intended workflow is to collect changes
+  in a markdown file which is used for creating the changelog and github release, or not use a changelog at all.
+
 ## Release Notes Workflow
 
 This tool supports to automatically read release notes to be used in the changelog and github release.
@@ -77,22 +83,24 @@ Usage:
       -V, --version                                      output the version number
       --verbose                                          verbose output (default: false)
       --dry-run                                          dry run (default: false)
-      --package-manager <package-manager>                package manager, detected from lock file by default (default: "auto")                                                                      
+      --package-manager <package-manager>                package manager, detected from lock file by default (default: "auto")
       --pre-scripts <pre-scripts>                        pre scripts seperated by commas (e.g. lint,test) (default: "lint,test")
       --commit-message <commit-message>                  new version commit message (default: "chore(release): {version}")
-      --commit-author <commit-author>                    new version commit author                                                                                                                  
+      --commit-author <commit-author>                    new version commit author
       --commit-email <commit-email>                      new version commit email
       --branch <branch>                                  release branch, for verification (default: "main")
-      --release-notes-source <release-notes-source>      path to release notes source markdown file. Leave empty to use empty release notes.                                                        
+      --release-notes-source <release-notes-source>      path to release notes source markdown file. Leave empty to use empty release notes.
       --release-notes-template <release-notes-template>  path to release notes template markdown file. Leave empty to not recreate the file after publishing.
       --changelog <changelog>                            path to changelog file. Leave empty to not update changelog. Will automatically be skipped if file doesn't exist. (default: "CHANGELOG.md")
-      --github-token <github-token>                      github token for creating github release. If not provided, CLI will attempt to load through gh CLI, or alternatively interactively ask.    
+      --github-token <github-token>                      github token for creating github release. If not provided, CLI will attempt to load through gh CLI, or alternatively interactively ask.
       --draft-release                                    create github release as draft (default: false)
       --npm-tag <npm-tag>                                npm tag to publish to (default: "latest")
-      --npm-access <npm-access>                          npm access level                                                                                                                           
-      --otp <npm-otp>                                    npm otp code                                                                                                                               
+      --npm-access <npm-access>                          npm access level
+      --otp <npm-otp>                                    npm otp code
       --release-assets <glob>                            glob for release assets to upload to the github release
       --pipe-stdout                                      pipe stdout of child processes through (default: false)
+      --no-version-prefix                                dont prefix the version with "v" (i.e. 1.0.0 instead of v1.0.0) in tag and github release name
+      --yes                                              skip verify prompt (default: false)
       --skip-install                                     skip installing dependencies (default: false)
       --skip-github-release                              skip creating github release (default: false)
       --skip-publish                                     skip publishing to npm (default: false)
