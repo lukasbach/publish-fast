@@ -26,6 +26,7 @@ import {
   updateChangelog,
   uploadReleaseAssets,
   verifyBranch,
+  verifyBranchUpToDate,
   verifyGithubToken,
   verifyNoUncommittedChanges,
   verifyPrompt,
@@ -113,10 +114,16 @@ process.on("SIGINT", () => {
     `Bumping **${packageJson.name}** (__github.com/${repoUser}/${repoName}__) from **${currentVersion}** to **${newVersion}**`
   );
 
+  if (!git.checkIsRepo()) {
+    log(`Not a git repository.`);
+    process.exit(1);
+  }
+
   const ghToken = await getGithubToken();
   await verifyGithubToken(ghToken);
   await verifyBranch();
   await verifyNoUncommittedChanges();
+  await verifyBranchUpToDate();
   await verifyPrompt();
   await installDeps(packageManager);
   await preScripts(packageManager);
